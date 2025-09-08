@@ -1,5 +1,7 @@
 package com.fit_planner_ai.FitPlannerAi.controller;
 
+import com.fit_planner_ai.FitPlannerAi.dto.LoginRequestDto;
+import com.fit_planner_ai.FitPlannerAi.dto.LoginResponseDto;
 import com.fit_planner_ai.FitPlannerAi.dto.RegisterRequestDto;
 import com.fit_planner_ai.FitPlannerAi.dto.RegisterResponseDto;
 import com.fit_planner_ai.FitPlannerAi.service.AuthService;
@@ -21,5 +23,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto request){
         return ResponseEntity.status(201).body(authService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto request){
+        return ResponseEntity.ok(authService.login(request));
     }
 }
