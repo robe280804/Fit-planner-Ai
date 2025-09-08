@@ -5,6 +5,7 @@ import com.fit_planner_ai.FitPlannerAi.dto.LoginResponseDto;
 import com.fit_planner_ai.FitPlannerAi.dto.RegisterRequestDto;
 import com.fit_planner_ai.FitPlannerAi.dto.RegisterResponseDto;
 import com.fit_planner_ai.FitPlannerAi.exception.UserAlredyRegisterEx;
+import com.fit_planner_ai.FitPlannerAi.exception.WrongAuthProviderEx;
 import com.fit_planner_ai.FitPlannerAi.mapper.AuthMapper;
 import com.fit_planner_ai.FitPlannerAi.model.*;
 import com.fit_planner_ai.FitPlannerAi.repository.TrainerRepository;
@@ -71,7 +72,7 @@ public class AuthService {
     }
 
     public LoginResponseDto login(LoginRequestDto request) {
-        //Qui metto la logica per vedere se il provider è locale o esterno
+        log.info("[LOGIN] Login in esecuzione per {}", request.getEmail());
 
         Authentication auth;
         try {
@@ -82,8 +83,16 @@ public class AuthService {
             log.warn("[LOGIN] Fallito per email {}: {}", request.getEmail(), ex.getMessage());
             throw ex;
         }
-        SecurityContextHolder.getContext().setAuthentication(auth);
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+
+        if (!userDetails.getProvider().equals(AuthProvider.LOCALE)){
+            SecurityContextHolder.clearContext();
+
+            log.warn("[LOGIN] Fallito per email {}, accesso già eseguito con il provider {}",
+                    userDetails.getEmail(), userDetails.getProvider());
+            throw new WrongAuthProviderEx("Errore, esegui l'accesso attraverso il provider con cui ti sei registrato");
+        }
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
         String token = jwtService.generateToken(
                 userDetails.getId(),
@@ -91,6 +100,7 @@ public class AuthService {
                 userDetails.getAuthorities(),
                 userDetails.getProvider());
 
+        log.info("[LOGIN] Login avvenuto con successo per {}", request.getEmail());
         return authMapper.loginResponseDto(userDetails, token);
     }
 }

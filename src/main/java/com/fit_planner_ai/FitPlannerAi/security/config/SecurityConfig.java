@@ -1,5 +1,6 @@
 package com.fit_planner_ai.FitPlannerAi.security.config;
 
+import com.fit_planner_ai.FitPlannerAi.security.oauth2.Oauth2SuccessHandlerImpl;
 import com.fit_planner_ai.FitPlannerAi.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final Oauth2SuccessHandlerImpl oauth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,8 +33,11 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request ->
-                        request.anyRequest().permitAll()
+                        request.anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2 -> {
+                    oauth2.successHandler(oauth2SuccessHandler);
+                })
                 .authenticationProvider(provider())
                 .build();
     }
