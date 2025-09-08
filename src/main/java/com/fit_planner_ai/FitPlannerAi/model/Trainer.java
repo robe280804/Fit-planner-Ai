@@ -9,6 +9,10 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+/**
+ * Entità Trainer
+ * Rappresenta un utente che è un allenatore, con ruolo TRAINER
+ */
 @Entity
 @Table(name = "trainers")
 @NoArgsConstructor
@@ -16,6 +20,9 @@ import java.util.List;
 @SuperBuilder
 public class Trainer extends BaseUser{
 
+    /**
+     * Un allenatore ha una lista di utenti (user)
+     */
     @OneToMany(mappedBy = "trainer")
     private List<User> clients;
 
