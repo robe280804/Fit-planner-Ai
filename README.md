@@ -23,48 +23,48 @@ Applicazione web dove utenti e allenatori interagiscono per creare e seguire pia
 
 ## Struttura Applicazione
 🧑‍💻 Utente:
-- id: UUID
-- username
-- email
-- password
-- ruoli: user, admin
-- provider: locale, google, github
-- Trainer **L'utente avrà un Trainer, Il Trainer avrà una List<Utente>**
+- **id**: UUID
+- **username**
+- **email**
+- **password**
+- **ruoli**: user, admin
+- **provider**: locale, google, github
+- **Trainer** L'utente avrà un Trainer, Il Trainer avrà una **List<Utente>**
 
 🏋️ Allenatore:
-- id: UUID
-- username
-- email
-- password
-- ruolo: trainer
-- provider: locale, google, github
-- List<Utente>
-**Possibile descrizione con: tipologia di qualifica, preparazione ...**
+- **id**: UUID
+- **username**
+- **email**
+- **password**
+- **ruolo**: trainer
+- **provider**: locale, google, github
+- **List<Utente>**
+- Possibile descrizione con: tipologia di qualifica, preparazione ...
 
 🗂️ Scheda allenamento (MongoDB):
-- Integer giorni **In una settimana**
-- Obbiettivo **forza, massa, esposività ...**
-- Livelllo Scheda **principiante, intermedio, avanzato**
-- Richieste utente **evitare squat, durata max allenamenti ...**
-- List<TrainingDay>
+- **Integer giorni** In una settimana
+- **Obbiettivo** forza, massa, esposività ...
+- **Livelllo Scheda** principiante, intermedio, avanzato
+- **Richieste utente** evitare squat, durata max allenamenti ...
+- **List<TrainingDay>**
 
 TrainingDay
-- giorno **Lunedi**
-- durata allenamento
-- List<Exercise>
+- **giorno** Lunedi
+- **durata allenamento**
+- **List<Exercise>**
 
 Exercise
-- nome 
-- Peso **se l'esercizio ne ha bisogno**
-- Integer ripetizioni
-- Integer serie
-- Double recupero
-- String breve spiegazione
+- **nome** 
+- **Peso** se l'esercizio ne ha bisogno
+- **Integer ripetizioni**
+- **Integer serie**
+- **Double recupero**
+- **String breve spiegazione**
 
 ## Implementazione AI, Kafka e WebSocket
-- Kafka per gestire la creazione delle schede in modo asincrono e in grande quantità
-- OpenAi o Gemini per la creazione delle schede d'allenamento
-- WebSocker per messaggi tra utente e allenatore
+- **Kafka** per gestire la creazione delle schede in modo asincrono e in grande quantità
+- **OpenAi** o Gemini per la creazione delle schede d'allenamento
+- **WebSocker** per messaggi tra utente e allenatore
 
 ## Flusso chat tra Utente e Allenatore
 - Allenatore invia messaggio guida: **"text": "Ciao! Per creare la tua scheda ho bisogno di questi dati: obiettivo, 
@@ -76,6 +76,12 @@ Exercise
                                                   "richiesteUtente": ["Evitare squat", "Durata max 60 min"]}**
 
 - Allenatore riceve il JSON, e invia la richiesta per creare la scheda all'AI
+
+## Flusso Autenticazione
+- L'utente si registra da provider **Locale** o esterno come **GitHub** e **Google**
+- L'utente può eseguire il Login solo se si è registrato in **locale**
+- Generazione **token** sia per l'accesso locale che da provider esterno
+- Filtro che intercetta ogni richiesta e verifica il token
 
 ## EndPoint
 🔑 Auth:
