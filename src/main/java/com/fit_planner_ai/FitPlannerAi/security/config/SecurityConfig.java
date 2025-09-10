@@ -1,5 +1,6 @@
 package com.fit_planner_ai.FitPlannerAi.security.config;
 
+import com.fit_planner_ai.FitPlannerAi.security.jwt.JwtFilter;
 import com.fit_planner_ai.FitPlannerAi.security.oauth2.Oauth2SuccessHandlerImpl;
 import com.fit_planner_ai.FitPlannerAi.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +27,7 @@ public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final Oauth2SuccessHandlerImpl oauth2SuccessHandler;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,13 +35,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(request ->
-                        request.anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(request -> {
+                            request.requestMatchers("/api/auth/**").permitAll();
+                            request.anyRequest().permitAll();
+                })
                 .oauth2Login(oauth2 -> {
                     oauth2.successHandler(oauth2SuccessHandler);
                 })
                 .authenticationProvider(provider())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

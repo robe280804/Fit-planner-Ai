@@ -14,6 +14,7 @@ public class RegisterResponseDto {
 
     private String message;
     private UUID idUtente;
+    private String userName;
     private String email;
     private AuthProvider provider;
     private Set<Roles> roles;

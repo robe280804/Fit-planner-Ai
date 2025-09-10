@@ -1,10 +1,13 @@
-package com.fit_planner_ai.FitPlannerAi.security.service;
+package com.fit_planner_ai.FitPlannerAi.security.jwt;
 
 import com.fit_planner_ai.FitPlannerAi.model.AuthProvider;
+import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;
+import com.fit_planner_ai.FitPlannerAi.security.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +26,7 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private Long expiration;
+
 
     private Key convertKey(){
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
@@ -78,11 +82,11 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public Date estraiExpiration(String token){
+    private Date estraiExpiration(String token){
         return  estraiAllClaims(token).getExpiration();
     }
 
-    public boolean isTokenExpired(String token){
+    private boolean isTokenExpired(String token){
         return estraiExpiration(token).before(new Date());
     }
 }

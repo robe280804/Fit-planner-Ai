@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-@MappedSuperclass  //La classe BaseUser non è una tabella, ma fornisce i campi da ereditare
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +25,9 @@ public abstract class BaseUser {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(name = "user_name", nullable = false)
+    private String userName;
 
     @Column(unique = true, nullable = false)
     private String email;

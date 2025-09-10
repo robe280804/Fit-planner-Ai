@@ -1,9 +1,6 @@
 package com.fit_planner_ai.FitPlannerAi.controller;
 
-import com.fit_planner_ai.FitPlannerAi.dto.LoginRequestDto;
-import com.fit_planner_ai.FitPlannerAi.dto.LoginResponseDto;
-import com.fit_planner_ai.FitPlannerAi.dto.RegisterRequestDto;
-import com.fit_planner_ai.FitPlannerAi.dto.RegisterResponseDto;
+import com.fit_planner_ai.FitPlannerAi.dto.*;
 import com.fit_planner_ai.FitPlannerAi.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

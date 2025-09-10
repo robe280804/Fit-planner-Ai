@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Set;
+
 /**
  * Entità User
  * Rappresenta un utente classico nel sistema, con ruolo USER
@@ -13,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Data
 public class User extends BaseUser {
 
     /**
@@ -21,4 +24,7 @@ public class User extends BaseUser {
     @ManyToOne
     @JoinColumn(name = "trainer_id")
     private Trainer trainer;
+
+
+
 }

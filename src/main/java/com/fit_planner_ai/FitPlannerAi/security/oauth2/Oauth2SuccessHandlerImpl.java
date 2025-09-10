@@ -6,7 +6,7 @@ import com.fit_planner_ai.FitPlannerAi.model.Roles;
 import com.fit_planner_ai.FitPlannerAi.model.User;
 import com.fit_planner_ai.FitPlannerAi.repository.UserRepository;
 import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;
-import com.fit_planner_ai.FitPlannerAi.security.service.JwtService;
+import com.fit_planner_ai.FitPlannerAi.security.jwt.JwtService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

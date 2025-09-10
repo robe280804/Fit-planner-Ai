@@ -17,6 +17,7 @@ public class AuthMapper {
         return RegisterResponseDto.builder()
                 .message("Registrazione avvenuta con successo")
                 .idUtente(user.getId())
+                .userName(user.getUserName())
                 .email(user.getEmail())
                 .provider(user.getProvider())
                 .roles(user.getRoles())
@@ -33,6 +34,7 @@ public class AuthMapper {
                         .map(GrantedAuthority::getAuthority)
                         .map(role -> Roles.valueOf(role.replace("ROLE_", "")))
                         .collect(Collectors.toSet()))
+                .token(token)
                 .build();
     }
 }

@@ -24,6 +24,7 @@ Applicazione web dove utenti e allenatori interagiscono per creare e seguire pia
 ## Struttura Applicazione
 🧑‍💻 Utente:
 - id: UUID
+- username
 - email
 - password
 - ruoli: user, admin
@@ -32,6 +33,7 @@ Applicazione web dove utenti e allenatori interagiscono per creare e seguire pia
 
 🏋️ Allenatore:
 - id: UUID
+- username
 - email
 - password
 - ruolo: trainer
@@ -76,10 +78,12 @@ Exercise
 - Allenatore riceve il JSON, e invia la richiesta per creare la scheda all'AI
 
 ## EndPoint
-🧑‍💻 Utente:
+🔑 Auth:
 - api/auth/register
 - api/auth/login
-- 
+
+🧑‍💻 User:
+- api/user/{trainerId}/get-trainer   
 
 ## 🌟 Possibili aggiunte future
 
