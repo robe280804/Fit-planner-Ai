@@ -1,5 +1,7 @@
 ## 🏋️‍♂️ FitPlanner AI
 
+- In sviluppo, sono possibili cambiamenti
+
 Descrizione generale:
 Applicazione web dove utenti e allenatori interagiscono per creare e seguire piani di allenamento personalizzati, supportati dall’AI.
 
@@ -90,6 +92,26 @@ Exercise
 
 🧑‍💻 User:
 - api/user/{trainerId}/get-trainer   
+
+
+## 🛠️ Stack Tecnologico
+
+Backend:
+
+- **Java + Spring Boot**: logica di business e gestione API REST.
+- **Spring Security + JWT**: autenticazione sicura e gestione utenti.
+- **MySQL**: gestione dati principali come utenti e allenatori.
+- **MongoDB**: gestione schede di allenamento e strutture flessibili come TrainingDay ed Exercise.
+- **Kafka**: gestione asincrona della creazione schede e notifiche.
+- **WebSocket**: chat in tempo reale tra utente e allenatore.
+- **OpenAI / Gemini API**: generazione automatica dei piani di allenamento tramite AI.
+
+Frontend:
+
+- **React**: costruzione dell’interfaccia web interattiva basata su componenti.
+- **TailwindCSS**: stile responsive alle pagine
+- **React Router Dom**: per la navigazione tra le pagine.
+
 
 ## 🌟 Possibili aggiunte future
 
