@@ -2,6 +2,7 @@ import { useState } from "react"
 import { registerFields } from "../components/AuthFormField"
 import { InputLabel } from "../components/InputLabel"
 
+
 export const RegisterPage = () => {
 
     const [formData, setFormData] = useState({
@@ -50,18 +51,27 @@ export const RegisterPage = () => {
         setError(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-        console.log(formData);
-        // Qui invii i dati al backend
-    }
+            alert(error)
+            console.log(formData);
+            // Qui invii i dati al backend
+        }
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <h1>Registrati a Fit Planner AI</h1>
+        <div
+            className="h-screen w-screen bg-cover bg-center relative"
+            style={{ backgroundImage: "url('/images/risen-wang-20jX9b35r_M-unsplash.jpg')" }}
+        >
+            <form
+                className="bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-126 rounded-lg border-2 "
+                onSubmit={handleSubmit}
+            >
+                <h1 className="text-center mt-6 mb-8 font-serif text-2xl italic font-[700]">Registrati a Fit Planner AI</h1>
 
                 {registerFields.map((field) => (
-                    <div key={field.id}>
+                    <div key={field.id}
+                        className="text-center m-6"
+                    >
                         <InputLabel
                             htmlFor={field.id}
                             labelName={field.labelName}
@@ -75,11 +85,17 @@ export const RegisterPage = () => {
                             pattern={field.pattern}
                             error={field.error}
                         />
-                        {error[field.name] && <p>{error[field.name]}</p>}
                     </div>
                 ))}
 
-                <button type="submit">Invia</button>
+                <button
+                    className="absolute right-10 bottom-12 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                    type="submit"
+                >
+                    Invia
+                </button>
+
+                <p className="absolute left-6 bottom-10 text-[14px] font-serif"> Hai già un account ? <a href="/login" className="text-blue-500">clicca qui</a></p>
             </form>
         </div>
     )
