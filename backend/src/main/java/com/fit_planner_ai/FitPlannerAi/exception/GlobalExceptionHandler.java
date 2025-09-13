@@ -1,5 +1,6 @@
 package com.fit_planner_ai.FitPlannerAi.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -47,6 +48,10 @@ public class GlobalExceptionHandler {
         return generateResponse("Errore interno", ex, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request){
+        return generateResponse("Errore interno", ex, HttpStatus.NOT_FOUND, request);
+    }
 
     private static ResponseEntity<Object> generateResponse(
             String error, Exception ex, HttpStatus status, WebRequest request

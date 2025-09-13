@@ -2,9 +2,11 @@ import { useState } from "react"
 import { registerFields } from "../components/AuthFormField"
 import { InputLabel } from "../components/InputLabel"
 import { registerUser } from "../api/AuthService"
+import { useNavigate } from "react-router-dom"
 
 
 export const RegisterPage = () => {
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         "username": "",
@@ -14,7 +16,7 @@ export const RegisterPage = () => {
         "coach": false
     });
 
-    const [error, setError] = useState({});
+    //const [error, setError] = useState({});
 
     const handleChange = (e) => {
         const { name, type, value, checked } = e.target;
@@ -49,16 +51,18 @@ export const RegisterPage = () => {
             if (error) newErrors[field.name] = error;
         });
 
-        setError(newErrors);
+        //setError(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            
+
             registerUser(formData)
-            .then(userInfo => console.log(userInfo))
-            .catch(err => {
-                alert(err.message)
-                console.log(err)
-            })
+                .then(userInfo => {
+                    console.log(userInfo)
+                    navigate("/login")})
+                .catch(err => {
+                    alert(err.message)
+                    console.log(err)
+                })
         }
     };
 
@@ -90,7 +94,7 @@ export const RegisterPage = () => {
                             pattern={field.pattern}
                             error={field.error}
                         />
-                        {error[field.name] && <p>{error[field.name]}</p>}
+                        {/**error[field.name] && <p>{error[field.name]}</p>*/}
                     </div>
                 ))}
 
@@ -101,9 +105,10 @@ export const RegisterPage = () => {
                     Invia
                 </button>
 
-                <p className="absolute text-[14px] left-4 font-serif"> Registrati con
-                     <a className="text-blue-500" href=""> Google </a> o  
-                      <a className="text-blue-500" href=""> GitHub </a></p>
+                <p className="absolute text-[14px] left-4 font-serif"> Accedi con
+                    <a className="text-blue-500" href="http://localhost:8080/oauth2/authorization/google"> Google </a> 
+                    o
+                    <a className="text-blue-500" href="http://localhost:8080/oauth2/authorization/github"> GitHub </a></p>
 
                 <p className="absolute left-6 bottom-6 text-[14px] font-serif"> Hai già un account ? <a href="/login" className="text-blue-500">clicca qui</a></p>
             </form>

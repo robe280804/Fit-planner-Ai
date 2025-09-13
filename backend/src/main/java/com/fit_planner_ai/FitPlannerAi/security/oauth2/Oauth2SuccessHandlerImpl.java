@@ -20,7 +20,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -30,6 +32,14 @@ public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    /**
+     * Success Handler post autenticazione con provider esterni
+     *
+     * - ottengo username (se username non è presente, gli do un valore random che l'utente potrà poi modificare)
+     * - ottengo email (se email non è presente in GitHub, prendo il valore del nome dell'utente e ci aggiungo il
+     *                  prefisso @github.com, l'utente potrà poi modificarlo)
+     * - se l'utente non esisteva lo creo e lo salvo nel db, e creo il token che invierò nel body della risposta
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -37,7 +47,16 @@ public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
 
         String provider = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
         String email = oAuth2User.getAttribute("email");
+
+        String userEmail = oAuth2User.getAttribute("email") != null ?
+                email : oAuth2User.getAttribute("login") + "@github.com";
+
+        String userName = provider.equalsIgnoreCase("github")
+                ? oAuth2User.getAttribute("login")
+                : Optional.ofNullable(oAuth2User.getAttribute("name"))
+                .orElse("user" + UUID.randomUUID()).toString();
 
         if (email == null) throw new IllegalStateException("Email non fornita dal provider OAuth2: " + provider);
 
@@ -45,6 +64,7 @@ public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
                 .map(UserDetailsImpl::new)
                 .orElseGet(() -> {
                     User newUser = userRepository.save(User.builder()
+                            .userName(userName)
                             .email(email)
                             .password(null)
                             .roles(Set.of(Roles.USER))
