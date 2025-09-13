@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { registerFields } from "../components/AuthFormField"
 import { InputLabel } from "../components/InputLabel"
+import { registerUser } from "../api/AuthService"
 
 
 export const RegisterPage = () => {
@@ -51,9 +52,13 @@ export const RegisterPage = () => {
         setError(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            alert(error)
-            console.log(formData);
-            // Qui invii i dati al backend
+            
+            registerUser(formData)
+            .then(userInfo => console.log(userInfo))
+            .catch(err => {
+                alert(err.message)
+                console.log(err)
+            })
         }
     };
 
@@ -85,6 +90,7 @@ export const RegisterPage = () => {
                             pattern={field.pattern}
                             error={field.error}
                         />
+                        {error[field.name] && <p>{error[field.name]}</p>}
                     </div>
                 ))}
 
@@ -95,7 +101,11 @@ export const RegisterPage = () => {
                     Invia
                 </button>
 
-                <p className="absolute left-6 bottom-10 text-[14px] font-serif"> Hai già un account ? <a href="/login" className="text-blue-500">clicca qui</a></p>
+                <p className="absolute text-[14px] left-4 font-serif"> Registrati con
+                     <a className="text-blue-500" href=""> Google </a> o  
+                      <a className="text-blue-500" href=""> GitHub </a></p>
+
+                <p className="absolute left-6 bottom-6 text-[14px] font-serif"> Hai già un account ? <a href="/login" className="text-blue-500">clicca qui</a></p>
             </form>
         </div>
     )

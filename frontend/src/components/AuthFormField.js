@@ -24,7 +24,7 @@ export const registerFields = [
     name: "password",
     placeholder: "Inserisci la password",
     required: true,
-    pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/?]).{8,}$",
+    pattern:  "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+]).{8,}$",
     errorMessage: "La password deve avere almeno 8 caratteri, una maiuscola, una minuscola, un numero e un carattere speciale"
   },
   {
