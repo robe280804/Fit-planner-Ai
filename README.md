@@ -66,7 +66,7 @@ Exercise
 ## Implementazione AI, Kafka e WebSocket
 - **Kafka** per gestire la creazione delle schede in modo asincrono e in grande quantità
 - **OpenAi** o Gemini per la creazione delle schede d'allenamento
-- **WebSocker** per messaggi tra utente e allenatore
+- **WebSocket** per messaggi tra utente e allenatore
 
 ## Flusso chat tra Utente e Allenatore
 - Allenatore invia messaggio guida: **"text": "Ciao! Per creare la tua scheda ho bisogno di questi dati: obiettivo, 
