@@ -2,10 +2,7 @@ package com.fit_planner_ai.FitPlannerAi.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,10 +13,10 @@ import java.util.UUID;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@SuperBuilder
 public abstract class BaseUser {
 
     @Id

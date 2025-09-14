@@ -6,8 +6,12 @@ import lombok.Data;
 @Data
 public class LoginRequestDto {
 
-    @Email(message = "Email non valida")
     @NotBlank(message = "L'email non può essere vuota")
+    @Email(message = "Formato email non valido")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "Email non valida: deve contenere un dominio valido"
+    )
     private String email;
 
     @NotNull(message = "La password non può essere vuota")

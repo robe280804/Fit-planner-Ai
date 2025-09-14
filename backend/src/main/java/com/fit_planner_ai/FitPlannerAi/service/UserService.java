@@ -1,23 +1,30 @@
 package com.fit_planner_ai.FitPlannerAi.service;
 
-import com.fit_planner_ai.FitPlannerAi.dto.GetTrainerDto;
+import com.fit_planner_ai.FitPlannerAi.dto.*;
 import com.fit_planner_ai.FitPlannerAi.exception.AlredyTrainerClient;
 import com.fit_planner_ai.FitPlannerAi.exception.TrainerAlreadyPresent;
 import com.fit_planner_ai.FitPlannerAi.exception.TrainerIsFull;
+import com.fit_planner_ai.FitPlannerAi.exception.UserAlredyRegisterEx;
 import com.fit_planner_ai.FitPlannerAi.mapper.UserMapper;
+import com.fit_planner_ai.FitPlannerAi.model.BaseUser;
+import com.fit_planner_ai.FitPlannerAi.model.Roles;
 import com.fit_planner_ai.FitPlannerAi.model.Trainer;
 import com.fit_planner_ai.FitPlannerAi.model.User;
+import com.fit_planner_ai.FitPlannerAi.repository.BaseUserRepository;
 import com.fit_planner_ai.FitPlannerAi.repository.TrainerRepository;
 import com.fit_planner_ai.FitPlannerAi.repository.UserRepository;
 import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,6 +34,7 @@ public class UserService {
     private final TrainerRepository trainerRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final BaseUserRepository baseUserRepository;
 
     /**
      * Assegnazione dell'allenatore all'utente
@@ -48,8 +56,6 @@ public class UserService {
      */
     @Transactional
     public GetTrainerDto getTrainer(UUID trainerId) {
-        log.info("{}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-
         UUID userId = getAuthUserId();
         log.info("[GET TRAINER] Registrazione dell'alenatore per l'utente {}", userId);
 
@@ -82,9 +88,63 @@ public class UserService {
         return userMapper.getTrainerDto(savedTrainer, user);
     }
 
+    @Transactional
+    public UpdateUserDto updateUserName(UserNameUpdateRequestDto request) {
+        UUID userId = getAuthUserId();
+        log.info("[UPDATE USERNAME] Aggiornamento username per {}", userId);
+
+        BaseUser existUser = baseUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User non trovato"));
+        existUser.setUserName(request.getUserName());
+
+        BaseUser savedUser = baseUserRepository.save(existUser);
+
+        log.info("[UPDATE USERNAME] Username aggiornato con successo per {}", userId);
+        return userMapper.updateUserDto(savedUser);
+    }
+
+    @Transactional
+    public UpdateUserDto updateEmail(EmailUpdateRequestDto request) {
+        UUID userId = getAuthUserId();
+        log.info("[UPDATE EMAIL] Aggiornamento email per {}", userId);
+
+        if (baseUserRepository.existsByEmail(request.getEmail())){
+            throw new UserAlredyRegisterEx("Email già registrata");
+        }
+        BaseUser existUser = baseUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User non trovato"));
+
+        existUser.setEmail(request.getEmail());
+
+        BaseUser savedUser = baseUserRepository.save(existUser);
+
+        log.info("[UPDATE EMAIL] Email aggiornato con successo per {}", userId);
+        return userMapper.updateUserDto(savedUser);
+    }
+
+    public UserDto getUser() {
+        UUID userId = getAuthUserId();
+
+        BaseUser existUser = baseUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User non trovato"));
+
+        return userMapper.userDto(existUser);
+    }
+
+    public List<UserDto> getAllUser() {
+        UUID userId = getAuthUserId();
+
+        return baseUserRepository.findAll().stream()
+                .filter(user -> !user.getRoles().contains(Roles.ADMIN))
+                .map(userMapper::userDto)
+                .toList();
+    }
+
 
     private UUID getAuthUserId(){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userDetails.getId();
     }
+
+
 }
