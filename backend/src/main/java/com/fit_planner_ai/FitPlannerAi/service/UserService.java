@@ -7,7 +7,7 @@ import com.fit_planner_ai.FitPlannerAi.exception.TrainerIsFull;
 import com.fit_planner_ai.FitPlannerAi.exception.UserAlredyRegisterEx;
 import com.fit_planner_ai.FitPlannerAi.mapper.UserMapper;
 import com.fit_planner_ai.FitPlannerAi.model.BaseUser;
-import com.fit_planner_ai.FitPlannerAi.model.Roles;
+import com.fit_planner_ai.FitPlannerAi.enums.Roles;
 import com.fit_planner_ai.FitPlannerAi.model.Trainer;
 import com.fit_planner_ai.FitPlannerAi.model.User;
 import com.fit_planner_ai.FitPlannerAi.repository.BaseUserRepository;
@@ -15,7 +15,6 @@ import com.fit_planner_ai.FitPlannerAi.repository.TrainerRepository;
 import com.fit_planner_ai.FitPlannerAi.repository.UserRepository;
 import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -88,6 +86,19 @@ public class UserService {
         return userMapper.getTrainerDto(savedTrainer, user);
     }
 
+    /**
+     * Aggiornamento Username
+     *
+     * <p> Il metodo esegue i seguenti step: </p>
+     * <ul>
+     *     <li> Ottengo l'id dell'utente che esegue la richiesta </li>
+     *     <li> Se l'utente esiste lo ottengo dal db e attraverso il setter imposto lo username </li>
+     *     <li> Salvo l'utente nel db e ritorno un DTO </li>
+     * </ul>
+     * @param request DTO con l'username da aggiornare
+     * @exception EntityNotFoundException se l'utente non esiste
+     * @return DTO con i dati dell'utente
+     */
     @Transactional
     public UpdateUserDto updateUserName(UserNameUpdateRequestDto request) {
         UUID userId = getAuthUserId();
@@ -103,6 +114,19 @@ public class UserService {
         return userMapper.updateUserDto(savedUser);
     }
 
+    /**
+     * Aggiornamento email
+     *
+     * <p> Il metodo esegue i seguenti step: </p>
+     * <ul>
+     *     <li> Ottengo l'id dell'utente che esegue la richiesta </li>
+     *     <li> Se l'utente esiste lo ottengo dal db e attraverso il setter imposto l'email </li>
+     *     <li> Salvo l'utente nel db e ritorno un DTO </li>
+     * </ul>
+     * @param request DTO con l'username da aggiornare
+     * @exception EntityNotFoundException se l'utente non esiste
+     * @return DTO con i dati dell'utente
+     */
     @Transactional
     public UpdateUserDto updateEmail(EmailUpdateRequestDto request) {
         UUID userId = getAuthUserId();
@@ -122,6 +146,12 @@ public class UserService {
         return userMapper.updateUserDto(savedUser);
     }
 
+    /**
+     * Ottenere un utente
+     *
+     * @exception EntityNotFoundException se l'utente non esiste
+     * @return DTO con i dati dell'utente
+     */
     public UserDto getUser() {
         UUID userId = getAuthUserId();
 
@@ -131,6 +161,17 @@ public class UserService {
         return userMapper.userDto(existUser);
     }
 
+    /**
+     * Ottengo tutti gli utenti (esclusi admin)
+     *
+     * <p> Il metodo esegue i seguenti step: </p>
+     * <ul>
+     *     <li> Ottengo tutti gli utenti dal db filtrando per quelli con ruoli != ADMIN </li>
+     *     <li> Ritorno una lista di DTO </li>
+     * </ul>
+     *
+     * @return LIsta di DTO con i dati dell'utente
+     */
     public List<UserDto> getAllUser() {
         UUID userId = getAuthUserId();
 

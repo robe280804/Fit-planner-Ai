@@ -18,6 +18,7 @@ public class ChatController {
     // Allenatore invia messaggio testuale
     @MessageMapping("/chat.trainer.send")
     public void sendTrainerMessage(@Valid TrainerMessageChatDto message) {
+        //aggiungo la logica per verificare che sia il suo cliente
         messagingTemplate.convertAndSendToUser(
                 message.getDestinatario(),  // email del cliente
                 "/queue/messages",
@@ -28,6 +29,7 @@ public class ChatController {
     // Utente invia risposta JSON con specifiche
     @MessageMapping("/chat.user.send")
     public void sendUserMessage(@Valid UserMessageChatDto message) {
+        //aggiungo la logica per verificare che sia il suo allenatore
         messagingTemplate.convertAndSendToUser(
                 message.getDestinatario(),  // email dell'allenatore
                 "/queue/messages",

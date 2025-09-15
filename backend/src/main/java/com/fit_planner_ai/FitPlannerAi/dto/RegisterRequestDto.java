@@ -1,6 +1,6 @@
 package com.fit_planner_ai.FitPlannerAi.dto;
 
-import com.fit_planner_ai.FitPlannerAi.model.Roles;
+import com.fit_planner_ai.FitPlannerAi.enums.Roles;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

@@ -1,8 +1,8 @@
 package com.fit_planner_ai.FitPlannerAi.security.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fit_planner_ai.FitPlannerAi.model.AuthProvider;
-import com.fit_planner_ai.FitPlannerAi.model.Roles;
+import com.fit_planner_ai.FitPlannerAi.enums.AuthProvider;
+import com.fit_planner_ai.FitPlannerAi.enums.Roles;
 import com.fit_planner_ai.FitPlannerAi.model.User;
 import com.fit_planner_ai.FitPlannerAi.repository.UserRepository;
 import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;

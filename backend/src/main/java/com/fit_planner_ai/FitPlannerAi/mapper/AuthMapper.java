@@ -3,7 +3,7 @@ package com.fit_planner_ai.FitPlannerAi.mapper;
 import com.fit_planner_ai.FitPlannerAi.dto.LoginResponseDto;
 import com.fit_planner_ai.FitPlannerAi.dto.RegisterResponseDto;
 import com.fit_planner_ai.FitPlannerAi.model.BaseUser;
-import com.fit_planner_ai.FitPlannerAi.model.Roles;
+import com.fit_planner_ai.FitPlannerAi.enums.Roles;
 import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;

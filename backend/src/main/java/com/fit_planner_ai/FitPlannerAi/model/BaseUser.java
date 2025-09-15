@@ -1,6 +1,8 @@
 package com.fit_planner_ai.FitPlannerAi.model;
 
 
+import com.fit_planner_ai.FitPlannerAi.enums.AuthProvider;
+import com.fit_planner_ai.FitPlannerAi.enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

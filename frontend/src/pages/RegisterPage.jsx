@@ -68,8 +68,7 @@ export const RegisterPage = () => {
 
     return (
         <div
-            className="h-screen w-screen bg-cover bg-center relative"
-            style={{ backgroundImage: "url('/images/risen-wang-20jX9b35r_M-unsplash.jpg')" }}
+            className="h-screen w-screen bg-[url(/images/risen-wang-20jX9b35r_M-unsplash.jpg)] bg-cover bg-scroll bg-center relative"
         >
             <form
                 className="bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-126 rounded-lg border-2 "

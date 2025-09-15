@@ -1,6 +1,6 @@
 package com.fit_planner_ai.FitPlannerAi.security.model;
 
-import com.fit_planner_ai.FitPlannerAi.model.AuthProvider;
+import com.fit_planner_ai.FitPlannerAi.enums.AuthProvider;
 import com.fit_planner_ai.FitPlannerAi.model.BaseUser;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

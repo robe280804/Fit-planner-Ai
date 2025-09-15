@@ -4,6 +4,8 @@ import com.fit_planner_ai.FitPlannerAi.dto.LoginRequestDto;
 import com.fit_planner_ai.FitPlannerAi.dto.LoginResponseDto;
 import com.fit_planner_ai.FitPlannerAi.dto.RegisterRequestDto;
 import com.fit_planner_ai.FitPlannerAi.dto.RegisterResponseDto;
+import com.fit_planner_ai.FitPlannerAi.enums.AuthProvider;
+import com.fit_planner_ai.FitPlannerAi.enums.Roles;
 import com.fit_planner_ai.FitPlannerAi.exception.UserAlredyRegisterEx;
 import com.fit_planner_ai.FitPlannerAi.exception.WrongAuthProviderEx;
 import com.fit_planner_ai.FitPlannerAi.mapper.AuthMapper;
