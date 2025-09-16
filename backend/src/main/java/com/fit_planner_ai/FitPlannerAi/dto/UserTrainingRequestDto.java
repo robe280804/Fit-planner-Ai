@@ -1,6 +1,7 @@
 package com.fit_planner_ai.FitPlannerAi.dto;
 
 import com.fit_planner_ai.FitPlannerAi.enums.Goal;
+import com.fit_planner_ai.FitPlannerAi.enums.TrainingType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
