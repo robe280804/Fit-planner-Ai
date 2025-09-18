@@ -2,28 +2,32 @@ package com.fit_planner_ai.FitPlannerAi.controller;
 
 import com.fit_planner_ai.FitPlannerAi.dto.UserMessageChatDto;
 import com.fit_planner_ai.FitPlannerAi.dto.TrainerMessageChatDto;
+import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;
+import com.fit_planner_ai.FitPlannerAi.service.WebSocketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+
+import java.security.Principal;
 
 @Controller //Per websocket, non prevede http response
 @RequiredArgsConstructor
+@Slf4j
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final WebSocketService webSocketService;
 
 
     // Allenatore invia messaggio testuale
     @MessageMapping("/chat.trainer.send")
-    public void sendTrainerMessage(@Valid TrainerMessageChatDto message) {
-        //aggiungo la logica per verificare che sia il suo cliente
-        messagingTemplate.convertAndSendToUser(
-                message.getDestinatario(),  // email del cliente
-                "/queue/messages",
-                message
-        );
+    public void sendTrainerMessage(@AuthenticationPrincipal UserDetailsImpl userDetails, @Valid TrainerMessageChatDto message) {
+        webSocketService.sendToClient(message, userDetails);
     }
 
     // Utente invia risposta JSON con specifiche

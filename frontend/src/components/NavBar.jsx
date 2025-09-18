@@ -2,6 +2,7 @@ import { VscAccount } from "react-icons/vsc";
 import { GiWeightLiftingUp } from "react-icons/gi";
 import { CiChat1 } from "react-icons/ci";
 import { LuLogOut } from "react-icons/lu";
+import { AccountInfo } from "./AccountInfo";
 
 
 
@@ -16,7 +17,8 @@ function NavBar() {
                 className="flex space-x-70 font-serif font-[1000] italic text-[16px]"
             >
                 <li><a href="/login"
-                    className="flex items-center gap-2 hover:underline hover:decoration-blue-500">
+                    className="flex items-center gap-2 hover:underline hover:decoration-blue-500"
+                    onClick={() => {localStorage.removeItem("token")}}>
                     <LuLogOut />
                     Logout
                 </a></li>
@@ -31,7 +33,8 @@ function NavBar() {
                     Training
                 </a></li>
                 <li><a href=""
-                    className="flex items-center gap-2 hover:underline hover:decoration-blue-500">
+                    className="flex items-center gap-2 hover:underline hover:decoration-blue-500"
+                    onClick={() => <AccountInfo />}>
                     <VscAccount />
                     Account
                 </a></li>

@@ -4,6 +4,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../api/UserService"
 
+
 export const MainPage = () => {
     const navigate = useNavigate()
     const {user} = useContext(AuthContext)
@@ -32,7 +33,6 @@ export const MainPage = () => {
             className="h-screen w-screen bg-cover bg-center relative"
             style={{ backgroundImage: "url('/images/victor-freitas-Yuv-iwByVRQ-unsplash.jpg')" }}>
             <NavBar />
-            
         </div>
     )
 }
