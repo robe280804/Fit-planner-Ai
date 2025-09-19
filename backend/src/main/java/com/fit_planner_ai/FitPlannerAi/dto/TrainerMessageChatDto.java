@@ -6,8 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class TrainerMessageChatDto {
+
+    private UUID userId;
 
     @NotBlank(message = "L'email non può essere vuota")
     @Email(message = "Formato email non valido")
@@ -15,6 +19,8 @@ public class TrainerMessageChatDto {
             regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
             message = "Email non valida: deve contenere un dominio valido")
     private String from;
+
+    private UUID destinatarioId;
 
     @NotBlank(message = "L'email non può essere vuota")
     @Email(message = "Formato email non valido")

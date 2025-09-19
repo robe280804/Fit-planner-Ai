@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         log.info("[FILTER] Filtro in esecuzione");
 
-        if (request.getRequestURI().startsWith("/api/auth/**")){
+        if (request.getRequestURI().startsWith("/api/auth/**") || request.getRequestURI().startsWith("/chat/info")){
             filterChain.doFilter(request, response);
             return;
         }

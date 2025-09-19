@@ -46,10 +46,10 @@ export const LoginPage = () => {
             style={{ backgroundImage: "url('/images/risen-wang-20jX9b35r_M-unsplash.jpg')" }}
         >
             <form
-                className="bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-126 rounded-lg border-2 "
+                className="bg-[#f4f3ee] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-126 rounded-lg border-2  border-[#0466c8] "
                 onSubmit={handleSubmit}
             >
-                <h1 className="text-center mt-6 mb-8 font-serif text-2xl italic font-[700]">Accedi a Fit Planner AI</h1>
+                <h1 className="text-center text-[#0466c8] mt-6 mb-8 font-serif text-2xl font-[700]">Accedi a Fit Planner AI</h1>
 
                 {loginField.map((field) => (
                     <div key={field.id}

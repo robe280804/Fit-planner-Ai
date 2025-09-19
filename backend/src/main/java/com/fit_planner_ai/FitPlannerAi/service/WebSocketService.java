@@ -1,8 +1,10 @@
 package com.fit_planner_ai.FitPlannerAi.service;
 
 import com.fit_planner_ai.FitPlannerAi.dto.TrainerMessageChatDto;
+import com.fit_planner_ai.FitPlannerAi.model.BaseUser;
 import com.fit_planner_ai.FitPlannerAi.model.Trainer;
 import com.fit_planner_ai.FitPlannerAi.model.User;
+import com.fit_planner_ai.FitPlannerAi.repository.BaseUserRepository;
 import com.fit_planner_ai.FitPlannerAi.repository.TrainerRepository;
 import com.fit_planner_ai.FitPlannerAi.repository.UserRepository;
 import com.fit_planner_ai.FitPlannerAi.security.model.UserDetailsImpl;
@@ -10,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
@@ -25,25 +28,31 @@ public class WebSocketService {
     private final SimpMessagingTemplate messagingTemplate;
     private final TrainerRepository trainerRepository;
     private final UserRepository userRepository;
+    private final BaseUserRepository baseUserRepository;
 
-    public void sendToClient(TrainerMessageChatDto message, UserDetailsImpl userDetails) {
+    /// Aggiungere in futuro l'autenticazione nella chat, in modo da rimuovere id e basarsi sull'utente autenticato
+    public void sendToClient(TrainerMessageChatDto message) {
+        UUID userId = (UUID) message.getUserId();
+        String email = message.getFrom();
+        log.info("Allenatore con id {} e email {}", userId, email);
 
-        log.info("user {}", userDetails.getEmail());
-        String email = userDetails.getEmail();
-        String trainerEmail = message.getDestinatario();
-        log.info("[WEBSOCKET] User {} sta inviando un messaaggio all'alllenatore {}", email, trainerEmail);
+        String clientEmail = message.getDestinatario();
+        UUID clientId = (UUID) message.getDestinatarioId();
+        log.info("Cliente con id {} e email {}", clientId, clientEmail);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
+        Trainer trainer = trainerRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato con email " + email));
 
-        Trainer trainer = trainerRepository.findByEmail(trainerEmail)
-                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
+        User user = userRepository.findById(clientId)
+                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato con email " + clientEmail));
 
-        if (!user.getTrainer().equals(trainer)){
+        if (!user.getTrainer().getId().equals(trainer.getId())){
             throw new RuntimeException("");
         }
+
+        log.info("[WEBSOCKET] Messaggio [{}] inviato al cliente {}", message.getContenuto(), clientEmail);
         messagingTemplate.convertAndSendToUser(
-                trainerEmail,
+                clientEmail,
                 "/queue/messages",
                 message
         );

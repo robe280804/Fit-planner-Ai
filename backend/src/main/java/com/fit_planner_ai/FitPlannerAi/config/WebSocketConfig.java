@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -66,12 +67,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-                if (StompCommand.CONNECT.equals(accessor.getCommand())){
                     String token = accessor.getFirstNativeHeader("Authorization");
+                    log.info("[WEBSOCKET] Token ricevuto {}", token);
 
                     if (token != null && token.startsWith("Bearer ")){
                         token = token.substring(7);
-
                         UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(jwtService.estraiEmail(token));
 
                         if (jwtService.isTokenValid(token, userDetails)){
@@ -80,12 +80,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                                     null,
                                     userDetails.getAuthorities()
                             );
-                            log.info("auth pre {}", auth);
+
+                            log.info("[WEBSOCKET] Oggetto authentication {}", auth);
                             accessor.setUser(auth);
-                            log.info("auth post {}", accessor.getUser());
                         }
                     }
-                }
                 return message;
             }
         });

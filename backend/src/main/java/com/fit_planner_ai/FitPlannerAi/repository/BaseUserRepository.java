@@ -7,11 +7,12 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface BaseUserRepository extends JpaRepository<BaseUser, UUID> {
     boolean existsByEmail(String email);
 
-    BaseUser findByEmail(String trainerEmail);
+    Optional<BaseUser> findByEmail(String trainerEmail);
 }
