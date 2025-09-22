@@ -4,10 +4,7 @@ package com.fit_planner_ai.app.model;
 import com.fit_planner_ai.app.enums.AuthProvider;
 import com.fit_planner_ai.app.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -26,11 +24,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String surname;
+    private String username;
 
     @Column(unique = true, nullable = false)
     private String email;
