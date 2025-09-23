@@ -9,8 +9,6 @@ import { validateField } from '../components/ValidateFields';
 import { login } from '../services/Authentication';
 import { useNavigate } from 'react-router-dom';
 
-const socialButtonClasses = "flex items-center gap-3 justify-center py-3 px-6 rounded-lg cursor-pointer text-white font-medium transition-all duration-200 shadow-md hover:shadow-lg";
-
 export const Login = () => {
     const navigate = useNavigate();
     const [error, setError] = useState<string[]>([]);
@@ -78,23 +76,27 @@ export const Login = () => {
     }, [error]);
 
     return (
-        <div className='h-screen w-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black'>
-            <div className='relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-10'>
+       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-black px-4">
+            <div className="relative bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 animate-fadeIn">
 
-                <h1 className='text-3xl font-bold text-center mb-8 text-gray-800'>Accedi a Fit Planner Ai</h1>
+                {/* Titolo */}
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-center mb-4 text-gray-900">
+                    Accedi a <span className="text-indigo-600">Fit Planner AI</span>
+                </h1>
 
+                {/* Alert errori */}
                 {sendData && error.length > 0 && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                        <strong className="font-bold"> Errore: </strong>
+                    <div
+                        className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded-lg mb-4 text-sm"
+                        role="alert"
+                    >
+                        <strong className="font-bold">Errore:</strong>
                         <span className="block sm:inline"> {error} </span>
                     </div>
                 )}
 
-
-                <form
-                    onSubmit={handleSubmit}
-                    className='flex flex-col gap-4'
-                >
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                     {loginFields.map((field) => (
                         <TextField
                             key={field.id}
@@ -105,44 +107,53 @@ export const Login = () => {
                             required={field.required}
                             value={fields[field.id as keyof typeof fields] || ""}
                             onChange={handleChange}
-                            variant="outlined"
                             fullWidth
-                            className="bg-gray-50 rounded-lg"
+                            className="bg-gray-50 rounded-xl border focus:ring-2 focus:ring-indigo-500 py-2.5"
                         />
                     ))}
 
                     <Button
                         type="submit"
-                        variant='contained'
+                        variant="contained"
                         endIcon={<SendIcon />}
-                        className='mt-4 bg-blue-600 hover:bg-blue-700 shadow-lg'
+                        className="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-semibold shadow-md transition-all"
                         fullWidth
                     >
-                        Invia
+                        Accedi
                     </Button>
                 </form>
 
-                {/* Pulsante Google */}
-                <a href='http://localhost:8080/api/auth/oauth2/authorize/google'>
-                <div className={`${socialButtonClasses} bg-red-500 hover:bg-red-600 mt-6`}>
-                    <GoogleIcon />
-                    <span>Accedi con Google</span>
+                {/* Divider */}
+                <div className="flex items-center my-4">
+                    <hr className="flex-grow border-gray-300" />
+                    <span className="px-2 text-gray-500 text-xs">oppure</span>
+                    <hr className="flex-grow border-gray-300" />
                 </div>
+
+                {/* Pulsanti social */}
+                <a href="http://localhost:8080/api/auth/oauth2/authorize/google">
+                    <div className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 rounded-xl shadow-sm transition-all text-sm">
+                        <GoogleIcon />
+                        <span>Google</span>
+                    </div>
                 </a>
 
-                {/* Pulsante GitHub */}
-                <a href='http://localhost:8080/api/auth/oauth2/authorize/github'>
-                <div className={`${socialButtonClasses} bg-gray-800 hover:bg-gray-900 mt-4`}>
-                    <GitHubIcon />
-                    <span>Accedi con GitHub</span>
-                </div>
+                <a href="http://localhost:8080/api/auth/oauth2/authorize/github">
+                    <div className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 rounded-xl shadow-sm transition-all mt-3 text-sm">
+                        <GitHubIcon />
+                        <span>GitHub</span>
+                    </div>
                 </a>
 
-                <p className='mt-6 text-center text-gray-600'>
-                    Non sei registrato? <a href='/register' className='text-blue-600 hover:underline'>Registrati qui</a>
+                {/* Link login */}
+                <p className="mt-4 text-center text-gray-600 text-sm">
+                    Non sei registrato?{" "}
+                    <a href="/register" className="text-indigo-600 hover:underline font-medium">
+                        Registrati qui
+                    </a>
                 </p>
-
             </div>
         </div>
+
     )
 }
