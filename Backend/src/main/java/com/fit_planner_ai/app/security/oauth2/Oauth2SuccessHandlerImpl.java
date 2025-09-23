@@ -104,7 +104,11 @@ public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
                 "provider", provider
         );
 
+        String redirectUrl = "http://localhost:5173/?token=" + token;
+
         log.info("[OAUTH2] Accesso esegutito con successo per {} dal provider {}", email, provider);
-        new ObjectMapper().writeValue(response.getWriter(), responseBody);
+
+       response.sendRedirect(redirectUrl);
+
     }
 }
