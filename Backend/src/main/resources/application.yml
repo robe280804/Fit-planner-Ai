@@ -10,6 +10,10 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASS}
 
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/Fit-Planner-Ai
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -34,8 +38,20 @@ spring:
               - email
               - profile
 
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: ai-consumer-group # identificativo del consumer group, tutti i consumer con lo stesso group-id condividono i messaggi
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest  #leggere i messaggi più vecchi se il consumer è nuovo
+
 
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000
+
 
