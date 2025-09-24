@@ -58,6 +58,11 @@ public class GlobalExceptionHandler {
         return generateResponse("Authentication provider errato", ex, HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(UserNotFound.class)
+    public ResponseEntity<Object> wrongAuthProviderEx(UserNotFound ex, WebRequest request){
+        return generateResponse("Errore interno", ex, HttpStatus.NOT_FOUND, request);
+    }
+
     private static ResponseEntity<Object> generateResponse(
             String error, Exception ex, HttpStatus status, WebRequest request
     ){

@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         log.info("[FILTER] Filtro in esecuzione");
 
-        if (request.getRequestURI().startsWith("/api/auth/**") || request.getRequestURI().startsWith("/chat/info")){
+        if (request.getRequestURI().startsWith("/api/auth/")){
             filterChain.doFilter(request, response);
             return;
         }
@@ -57,6 +57,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 userDetails.getAuthorities()
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
+
+        log.info("auth {}", SecurityContextHolder.getContext().getAuthentication());
 
         filterChain.doFilter(request, response);
     }

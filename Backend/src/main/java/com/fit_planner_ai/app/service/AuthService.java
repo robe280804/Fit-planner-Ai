@@ -7,7 +7,7 @@ import com.fit_planner_ai.app.dto.RegisterResponseDto;
 import com.fit_planner_ai.app.enums.AuthProvider;
 import com.fit_planner_ai.app.exception.UserAlredyRegister;
 import com.fit_planner_ai.app.exception.WrongAuthProvider;
-import com.fit_planner_ai.app.mapper.AuthMapper;
+import com.fit_planner_ai.app.mapper.UserMapper;
 import com.fit_planner_ai.app.model.User;
 import com.fit_planner_ai.app.repository.UserRepository;
 import com.fit_planner_ai.app.security.jwt.JwtService;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final AuthMapper authMapper;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -54,7 +54,7 @@ public class AuthService {
         User savedUser = userRepository.save(newUser);
 
         log.info("[REGISTER] Registrazione avvenuta con successo per {}", savedUser.getEmail());
-        return authMapper.registerResponseDto(savedUser);
+        return userMapper.registerResponseDto(savedUser);
     }
 
     /**
@@ -101,6 +101,6 @@ public class AuthService {
                 userDetails.getProvider());
 
         log.info("[LOGIN] Login avvenuto con successo per {}", request.getEmail());
-        return authMapper.loginResponseDto(userDetails, token);
+        return userMapper.loginResponseDto(userDetails, token);
     }
 }

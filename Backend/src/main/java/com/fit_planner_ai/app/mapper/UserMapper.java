@@ -2,6 +2,7 @@ package com.fit_planner_ai.app.mapper;
 
 import com.fit_planner_ai.app.dto.LoginResponseDto;
 import com.fit_planner_ai.app.dto.RegisterResponseDto;
+import com.fit_planner_ai.app.dto.UserDto;
 import com.fit_planner_ai.app.enums.Role;
 import com.fit_planner_ai.app.model.User;
 import com.fit_planner_ai.app.security.model.UserDetailsImpl;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 
 @Component
-public class AuthMapper {
+public class UserMapper {
 
     public RegisterResponseDto registerResponseDto(User user){
         return RegisterResponseDto.builder()
@@ -37,6 +38,18 @@ public class AuthMapper {
                         .map(role -> Role.valueOf(role.replace("ROLE_", "")))
                         .collect(Collectors.toSet()))
                 .token(token)
+                .build();
+    }
+
+    public UserDto userDto(User user){
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .provider(user.getProvider())
+                .roles(user.getRoles())
                 .build();
     }
 }

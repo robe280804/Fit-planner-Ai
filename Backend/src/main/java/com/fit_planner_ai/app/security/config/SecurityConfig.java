@@ -1,6 +1,7 @@
 package com.fit_planner_ai.app.security.config;
 
 
+import com.fit_planner_ai.app.security.jwt.JwtFilter;
 import com.fit_planner_ai.app.security.oauth2.Oauth2SuccessHandlerImpl;
 import com.fit_planner_ai.app.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final Oauth2SuccessHandlerImpl oauth2SuccessHandler;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -42,6 +44,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> {
                     oauth2.successHandler(oauth2SuccessHandler);
                 })
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(provider())
                 .build();
     }

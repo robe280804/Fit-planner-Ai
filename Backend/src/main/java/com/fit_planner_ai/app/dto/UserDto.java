@@ -4,6 +4,7 @@ import com.fit_planner_ai.app.enums.AuthProvider;
 import com.fit_planner_ai.app.enums.Role;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 import java.util.UUID;
