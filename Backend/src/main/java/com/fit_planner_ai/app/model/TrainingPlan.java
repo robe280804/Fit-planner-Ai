@@ -4,8 +4,10 @@ import com.fit_planner_ai.app.enums.Goal;
 import com.fit_planner_ai.app.enums.TrainingLevel;
 import com.fit_planner_ai.app.enums.TrainingType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,6 +18,10 @@ import java.util.Set;
 import java.util.UUID;
 
 @Document("training-plan")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class TrainingPlan {
 
     @Id

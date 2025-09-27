@@ -63,6 +63,11 @@ public class GlobalExceptionHandler {
         return generateResponse("Errore interno", ex, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(AiResponseParsingException.class)
+    public ResponseEntity<Object> parsingEx(AiResponseParsingException ex, WebRequest request){
+        return generateResponse("Errore interno nel parsing", ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
     private static ResponseEntity<Object> generateResponse(
             String error, Exception ex, HttpStatus status, WebRequest request
     ){

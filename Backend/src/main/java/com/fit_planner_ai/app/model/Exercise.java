@@ -1,5 +1,10 @@
 package com.fit_planner_ai.app.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@Data
 public class Exercise {
 
     private String name;

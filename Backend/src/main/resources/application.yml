@@ -42,12 +42,14 @@ spring:
     bootstrap-servers: "localhost:9092"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
-      group-id: ai-consumer-group # identificativo del consumer group, tutti i consumer con lo stesso group-id condividono i messaggi
+      group-id: ai-consumer-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      auto-offset-reset: earliest  #leggere i messaggi più vecchi se il consumer è nuovo
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"  # permette di deserializzare TrainingRequestDto
+      auto-offset-reset: earliest
 
 
 jwt:

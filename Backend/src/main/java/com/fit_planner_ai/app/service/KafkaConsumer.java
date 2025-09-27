@@ -15,10 +15,11 @@ import java.util.UUID;
 public class KafkaConsumer {
 
     private final KafkaTemplate<UUID, TrainingRequestDto> kafkaTemplate;
-    private final AiService aiService;
+    private final TrainingService trainingService;
 
     @KafkaListener(topics = "ai-requests", groupId = "ai-consumer-group")
     public void consumeRequest(TrainingRequestDto request) {
-
+        log.info("[KAFKA CONSUMER] Richiesta arrivata {}", request);
+        trainingService.generateTrainingPlan(request);
     }
 }

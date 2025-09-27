@@ -15,12 +15,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KafkaProducer {
 
-    private final KafkaTemplate<UUID, TrainingRequestDto> kafkaTemplate;
+    private final KafkaTemplate<String, TrainingRequestDto> kafkaTemplate;
 
     public void sendRequest(TrainingRequestDto request){
         UUID userId = getUserAuthId();
         log.info("[CONSUMER] Dati inviati dall utente con id {}, [{}]", userId, request);
-        kafkaTemplate.send("ai-request", userId, request);
+        kafkaTemplate.send("ai-requests", userId.toString(), request)
+                .whenComplete((res, ex) -> {
+                    if (ex == null){
+                        log.info("[KAFKA PRODUCER] Richiesta inviata con successo a {}", res.getRecordMetadata().topic());
+                    } else {
+                        log.error("[KAFKA PRODUCER] Errore durante l'invio", ex);
+                    }
+        });
     }
 
     private static UUID  getUserAuthId() {
