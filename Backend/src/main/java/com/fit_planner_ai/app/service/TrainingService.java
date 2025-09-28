@@ -203,4 +203,33 @@ public class TrainingService {
                 request.getAdditionalMetrics()
         );
     }
+
+    public List<TrainingPlanDto> getTrainingPlans() {
+        UUID userId = getUserAuthId();
+        log.info("[GET TRAINING PLANS] Metodo in esecuzione per l'utente {}", userId);
+
+        return trainingPlanRepository.findAllByUserId(userId).stream()
+                .map(trainingMapper::trainingPlanDto)
+                .toList();
+    }
+
+    public Boolean delete(String trainingPlanId) {
+        UUID userId = getUserAuthId();
+        log.info("[DELETE TRAINING PLAN] Eliminazione della scheda {} per l'utente {}", trainingPlanId, userId);
+
+        if (!trainingPlanRepository.existsById(trainingPlanId)){
+            log.info("[DELETE TRAINING PLAN] Eliminazione non eseguita, scheda non trovata");
+            return false;
+        }
+        trainingPlanRepository.deleteByIdAndUserId(trainingPlanId, userId);
+
+        log.info("[DELETE TRAINING PLAN] Eliminazione eseguita");
+        return true;
+    }
+
+    private static UUID  getUserAuthId() {
+        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getId();
+    }
+
 }
