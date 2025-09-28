@@ -1,5 +1,7 @@
 package com.fit_planner_ai.app.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum TrainingType {
     CORSA,
     PESI,
@@ -8,5 +10,5 @@ public enum TrainingType {
     CICLISMO,
     NUOTO,
     CROSSFIT,
-    ALTRO
+    ALTRO;
 }

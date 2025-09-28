@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 public class TrainingPlanDto {
 
-    private Long id;
+    private String id;
     private UUID userId;
     private int days;
     private List<DailyTraining> dailyTrainings;

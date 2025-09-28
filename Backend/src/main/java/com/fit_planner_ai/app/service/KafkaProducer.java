@@ -19,6 +19,7 @@ public class KafkaProducer {
 
     public void sendRequest(TrainingRequestDto request){
         UUID userId = getUserAuthId();
+        request.setUserId(userId);
         log.info("[CONSUMER] Dati inviati dall utente con id {}, [{}]", userId, request);
         kafkaTemplate.send("ai-requests", userId.toString(), request)
                 .whenComplete((res, ex) -> {

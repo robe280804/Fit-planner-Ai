@@ -1,10 +1,14 @@
 package com.fit_planner_ai.app.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fit_planner_ai.app.dto.TrainingPlanDto;
 import com.fit_planner_ai.app.dto.TrainingRequestDto;
+import com.fit_planner_ai.app.enums.Goal;
+import com.fit_planner_ai.app.enums.TrainingLevel;
+import com.fit_planner_ai.app.enums.TrainingType;
 import com.fit_planner_ai.app.exception.AiResponseParsingException;
 import com.fit_planner_ai.app.mapper.TrainingMapper;
 import com.fit_planner_ai.app.model.DailyTraining;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -33,7 +38,16 @@ public class TrainingService {
     private final TrainingRequestRepository trainingRequestRepository;
     private final TrainingMapper trainingMapper;
 
-
+    /**
+     * <p> Il metodo esegue i seguenti step: </p>
+     * <ul>
+     *     <li> Ottengo il DTO inviado dall'utente attraverso kafka </li>
+     *     <li> Genero il prompt da inviare a gemini </li>
+     *     <li> Eseguo la chiamata a gemini, e converto la risposta nella classe TrainingPlan </li>
+     * </ul>
+     * @param request DTO con i dati inviati dall'utente
+     * @return DTO che rappresenta la scheda d'allenamento generata
+     */
     public TrainingPlanDto generateTrainingPlan(TrainingRequestDto request) {
         String prompt = generetePrompt(request);
         String response = aiService.getAiAnswer(prompt);
@@ -77,13 +91,14 @@ public class TrainingService {
                     .trim();
 
             JsonNode internalRoot = mapper.readTree(cleanedJson);
-            JsonNode trainingCardsNode = internalRoot.path("trainingCards").get(0);
+            JsonNode trainingCardsNode = internalRoot.path("trainingCards");
             JsonNode dailyTrainingsNode = trainingCardsNode.get("dailyTrainings");
 
             List<DailyTraining> dailyTrainings = new ArrayList<>();
 
             for (JsonNode dayTrainingNode : dailyTrainingsNode){
                 DailyTraining dailyTraining = new DailyTraining();
+                dailyTraining.setDay(dayTrainingNode.get("day").asText());
                 dailyTraining.setTrainingDuration(dayTrainingNode.get("trainingDuration").asInt());
                 List<Exercise> exercises = new ArrayList<>();
 
@@ -102,17 +117,23 @@ public class TrainingService {
                 dailyTrainings.add(dailyTraining);
             }
 
+            TypeReference<Set<TrainingType>> trainingTypeSetType = new TypeReference<>() {};
+            TypeReference<Set<Goal>> goalSetType = new TypeReference<>() {};
+
+            log.info("TrainingCrdNodes: {}", trainingCardsNode);
+            log.info("DailyCardNode: {}", dailyTrainingsNode);
+
             TrainingPlan trainingPlan = TrainingPlan.builder()
-                    .userId(getUserAuthId())
+                    .userId(request.getUserId())
                     .days(trainingCardsNode.get("days").asInt())
                     .dailyTrainings(dailyTrainings)
-                    .type(request.getType())
-                    .goals(request.getGoals())
-                    .trainingLevel(request.getTrainingLevel())
+                    .type(mapper.convertValue(trainingCardsNode.get("type"),  trainingTypeSetType))
+                    .goals(mapper.convertValue(trainingCardsNode.get("goals"), goalSetType))
+                    .trainingLevel(TrainingLevel.valueOf(trainingCardsNode.get("trainingLevel").asText()))
                     .build();
 
             TrainingRequest trainingRequest = TrainingRequest.builder()
-                    .userId(getUserAuthId())
+                    .userId(request.getUserId())
                     .days(request.getDays())
                     .maxDuration(request.getDuration())
                     .type(request.getType())
@@ -143,6 +164,7 @@ public class TrainingService {
                             "days": int,
                             "dailyTrainings": [
                               {
+                                "day": String
                                 "trainingDuration": int,
                                 "exercises": [
                                   {
@@ -180,10 +202,5 @@ public class TrainingService {
                 request.getTrainingLevel(),
                 request.getAdditionalMetrics()
         );
-    }
-
-    private static UUID getUserAuthId() {
-        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getId();
     }
 }

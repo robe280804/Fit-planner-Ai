@@ -8,9 +8,13 @@ import lombok.Data;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 public class TrainingRequestDto {
+
+    @Null
+    private UUID userId;
 
     @NotNull(message = "Il numero di giorni non può essere nullo")
     @Min(value = 1, message = "I giorni devono essere almeno 1")

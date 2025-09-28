@@ -25,10 +25,10 @@ import java.util.UUID;
 public class TrainingRequest {
 
     @Id
-    private Long id;
+    private String id;
     private UUID userId;
-    private int days;
-    private int maxDuration;
+    private Integer days;
+    private Integer maxDuration;
     private Set<TrainingType> type;
     private Set<Goal> goals;
     private TrainingLevel trainingLevel;

@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class DailyTraining {
 
+    private String day;
     private int trainingDuration;
     private List<Exercise> exercises;
 }

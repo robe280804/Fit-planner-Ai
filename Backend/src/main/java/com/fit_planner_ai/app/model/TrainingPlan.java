@@ -25,7 +25,7 @@ import java.util.UUID;
 public class TrainingPlan {
 
     @Id
-    private Long id;
+    private String id;
 
     private UUID userId;
     private int days;

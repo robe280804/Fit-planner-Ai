@@ -1,8 +1,10 @@
 package com.fit_planner_ai.app.service;
 
 import com.fit_planner_ai.app.dto.TrainingRequestDto;
+import com.fit_planner_ai.app.exception.AiResponseParsingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "ai-requests", groupId = "ai-consumer-group")
     public void consumeRequest(TrainingRequestDto request) {
-        log.info("[KAFKA CONSUMER] Richiesta arrivata {}", request);
-        trainingService.generateTrainingPlan(request);
+            log.info("[KAFKA CONSUMER] Richiesta arrivata {}", request);
+            trainingService.generateTrainingPlan(request);
     }
 }
