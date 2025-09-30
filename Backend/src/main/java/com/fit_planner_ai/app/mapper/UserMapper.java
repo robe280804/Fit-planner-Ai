@@ -27,7 +27,7 @@ public class UserMapper {
     }
 
 
-    public LoginResponseDto loginResponseDto(UserDetailsImpl userDetails, String accessToken, String refreshToken) {
+    public LoginResponseDto loginResponseDto(UserDetailsImpl userDetails, String accessToken) {
         return LoginResponseDto.builder()
                 .message("Login effettuato con successo")
                 .id(userDetails.getId())
@@ -38,7 +38,6 @@ public class UserMapper {
                         .map(role -> Role.valueOf(role.replace("ROLE_", "")))
                         .collect(Collectors.toSet()))
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
     }
 

@@ -1,6 +1,5 @@
 package com.fit_planner_ai.app.security.oauth2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fit_planner_ai.app.enums.AuthProvider;
 import com.fit_planner_ai.app.enums.Role;
 import com.fit_planner_ai.app.model.User;
@@ -21,7 +20,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -112,12 +110,12 @@ public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
                 userDetails.getProvider());
 
 
-        Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-        refreshCookie.setHttpOnly(true);    // per la sicurezza XSS
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);    // per la sicurezza XSS
         //refreshCookie.setSecure(true);   se usi HTTPS
-        refreshCookie.setMaxAge(Math.toIntExact(longExpiration));
-        refreshCookie.setPath("/");
-        response.addCookie(refreshCookie);
+        refreshTokenCookie.setMaxAge(Math.toIntExact(longExpiration));
+        refreshTokenCookie.setPath("/api/auth/refresh");
+        response.addCookie(refreshTokenCookie);
 
         String redirectUrl = "http://localhost:5173/?token=" + accessToken;
 
