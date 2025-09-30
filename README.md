@@ -53,8 +53,11 @@ Exercise
 ## Flusso Autenticazione
 - L'utente si registra da provider **Locale** o esterno come **GitHub** e **Google**
 - L'utente può eseguire il Login solo se si è registrato in **locale**
-- Generazione **token** sia per l'accesso locale che da provider esterno
-- Filtro che intercetta ogni richiesta e verifica il token
+- Generazione **access token** e **refresh token** sia per l'accesso locale che da provider esterno
+- L'access token viene salvato nel **local storage**, il refresh token in un **cookie**
+- Ad **ogni richiesta** viene inviato l'**access token**
+- Se scaduto, viene inviato dal frontend il refresh token che, se valido, genera un nuovo **access token**
+- Se anche il **refresh** token è **scaduto** l'utente viene **reindirizzato al login**
 
 ## EndPoint
 🔑 Auth:

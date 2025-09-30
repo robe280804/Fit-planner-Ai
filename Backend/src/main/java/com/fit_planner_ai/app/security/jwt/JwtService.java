@@ -21,8 +21,12 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String key;
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+    @Value("${jwt.expiration.access_token}")
+    private Long shortExpiration;
+
+    @Value("${jwt.expiration.refresh_token}")
+    private Long longExpiration;
+
 
 
     private Key convertKey(){
@@ -30,18 +34,26 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String createToken(Map<String, Object> claims){
+    private String createAccessToken(Map<String, Object> claims){
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + shortExpiration))
                 .signWith(convertKey(), SignatureAlgorithm.HS256)
                 .compact();
-
-
     }
 
-    public String generateToken(UUID userId, String email, Collection<? extends GrantedAuthority> authorities, AuthProvider provider){
+    private String createRefreshToken(Map<String, Object> claims){
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + longExpiration))
+                .signWith(convertKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    ///  Se viene passato True creo un access token, altrimenti un refresh token
+    public String generateToken(boolean isAccess, UUID userId, String email, Collection<? extends GrantedAuthority> authorities, AuthProvider provider){
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", authorities.stream()
                 .map(GrantedAuthority::getAuthority)
@@ -49,7 +61,11 @@ public class JwtService {
         claims.put("sub", userId);
         claims.put("email", email);
         claims.put("provider", provider);
-        return createToken(claims);
+
+        if (isAccess){
+            return createAccessToken(claims);
+        }
+        return createRefreshToken(claims);
     }
 
     public Claims estraiAllClaims(String token){

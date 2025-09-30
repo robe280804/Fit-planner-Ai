@@ -18,5 +18,6 @@ public class LoginResponseDto {
     private String email;
     private AuthProvider provider;
     private Set<Role> roles;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 }

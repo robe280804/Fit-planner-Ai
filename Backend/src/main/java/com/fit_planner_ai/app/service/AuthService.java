@@ -8,7 +8,9 @@ import com.fit_planner_ai.app.enums.AuthProvider;
 import com.fit_planner_ai.app.exception.UserAlredyRegister;
 import com.fit_planner_ai.app.exception.WrongAuthProvider;
 import com.fit_planner_ai.app.mapper.UserMapper;
+import com.fit_planner_ai.app.model.RefreshToken;
 import com.fit_planner_ai.app.model.User;
+import com.fit_planner_ai.app.repository.RefreshTokenRepository;
 import com.fit_planner_ai.app.repository.UserRepository;
 import com.fit_planner_ai.app.security.jwt.JwtService;
 import com.fit_planner_ai.app.security.model.UserDetailsImpl;
@@ -23,6 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,6 +37,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public RegisterResponseDto register(RegisterRequestDto request) {
         log.info("[REGISTER] Registrazione in esecuzione per {} ", request.getEmail());
@@ -94,13 +99,29 @@ public class AuthService {
         }
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        String token = jwtService.generateToken(
+        String accessToken = jwtService.generateToken(
+                true,
                 userDetails.getId(),
                 userDetails.getEmail(),
                 userDetails.getAuthorities(),
                 userDetails.getProvider());
 
+        String refreshToken = jwtService.generateToken(
+                false,
+                userDetails.getId(),
+                userDetails.getEmail(),
+                userDetails.getAuthorities(),
+                userDetails.getProvider());
+
+        refreshTokenRepository.save(RefreshToken.builder()
+                        .userId(userDetails.getId())
+                        .refreshToken(refreshToken)
+                        .expiresAt(LocalDateTime.now().plusDays(7))
+                        .revoked(false)
+                .build());
+
+        log.info("[LOGIN] Refresh token salvato {}", refreshToken);
         log.info("[LOGIN] Login avvenuto con successo per {}", request.getEmail());
-        return userMapper.loginResponseDto(userDetails, token);
+        return userMapper.loginResponseDto(userDetails, accessToken, refreshToken);
     }
 }

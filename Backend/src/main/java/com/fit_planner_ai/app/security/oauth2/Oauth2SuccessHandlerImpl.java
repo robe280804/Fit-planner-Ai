@@ -8,10 +8,12 @@ import com.fit_planner_ai.app.repository.UserRepository;
 import com.fit_planner_ai.app.security.jwt.JwtService;
 import com.fit_planner_ai.app.security.model.UserDetailsImpl;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -29,6 +31,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
 
+    @Value("${jwt.expiration.refresh_token}")
+    private Long longExpiration;
+
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
@@ -38,7 +43,8 @@ public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
      * - ottengo username (se username non è presente, gli do un valore random che l'utente potrà poi modificare)
      * - ottengo email (se email non è presente in GitHub, prendo il valore del nome dell'utente e ci aggiungo il
      *                  prefisso @github.com, l'utente potrà poi modificarlo)
-     * - se l'utente non esisteva lo creo e lo salvo nel db, e creo il token che invierò nel body della risposta
+     * - se l'utente non esisteva lo creo e lo salvo nel db
+     * - creo il refresh e access token, il refresh lo invio in un cookie per la security, access token nell' url
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -91,24 +97,34 @@ public class Oauth2SuccessHandlerImpl implements AuthenticationSuccessHandler {
                     return new UserDetailsImpl(newUser);
                 });
 
-        String token = jwtService.generateToken(
-                userDetails.getId(), userDetails.getEmail(), userDetails.getAuthorities(), userDetails.getProvider()
-        );
+        String accessToken = jwtService.generateToken(
+                true,
+                userDetails.getId(),
+                userDetails.getEmail(),
+                userDetails.getAuthorities(),
+                userDetails.getProvider());
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        String refreshToken = jwtService.generateToken(
+                false,
+                userDetails.getId(),
+                userDetails.getEmail(),
+                userDetails.getAuthorities(),
+                userDetails.getProvider());
 
-        Map<String, String> responseBody = Map.of(
-                "email", userDetails.getEmail(),
-                "token", token,
-                "provider", provider
-        );
 
-        String redirectUrl = "http://localhost:5173/?token=" + token;
+        Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
+        refreshCookie.setHttpOnly(true);    // per la sicurezza XSS
+        //refreshCookie.setSecure(true);   se usi HTTPS
+        refreshCookie.setMaxAge(Math.toIntExact(longExpiration));
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
+
+        String redirectUrl = "http://localhost:5173/?token=" + accessToken;
 
         log.info("[OAUTH2] Accesso esegutito con successo per {} dal provider {}", email, provider);
 
-       response.sendRedirect(redirectUrl);
-
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.sendRedirect(redirectUrl);
     }
 }

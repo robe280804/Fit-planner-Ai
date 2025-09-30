@@ -1,28 +1,15 @@
-import { createContext, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { AuthContext } from "./AuthContext";
 
-
-// Tipizzazione dell'utente
 type User = {
     id: string;
     name: string;
     surname: string;
     username: string;
     email: string;
-    token: string;
     provider: string;
     roles: string[];
 };
-
-// Tipi del contesto
-type AuthContextType = {
-    logged: boolean;
-    user?: User;
-    setAuth: (data: User) => void;
-    removeAuth: () => void;
-};
-
-//Creo il contesto che sarà di tipo: AuthcontextType o undefined, inizialmente è undefined
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [logged, setLogged] = useState<boolean>(false);
