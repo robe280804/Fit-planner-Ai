@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -23,25 +24,31 @@ public class AiService {
 
     private final WebClient webClient;
 
-    public String getAiAnswer(String prompt){
+    /**
+     * <p> Il metodo esegue i seguenti step: </p>
+     * <ul>
+     *     <li> Creo il formato della richiesta che viene accettato da Gemini </li>
+     *     <li> Eseguo la chiamata asincrona al servizio, passandogli url e chiave</li>
+     * </ul>
+     * @param prompt
+     * @return
+     */
+    public Mono<String> getAiAnswer(String prompt){
         Map<String, Object> request = Map.of(
             "contents", new Object[]{
                         Map.of("parts", new Object[]{
                                 Map.of("text", prompt)
                     })
                 });
-
-        try {
             return webClient.post()
                     .uri(geminiUrl + geminiKey.trim())
                     .header(HttpHeaders.CONTENT_TYPE, "application/json")
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(String.class)
-                    .block();
-        } catch (WebClientResponseException e) {
-            log.error("Errore chiamata Gemini", e);
-            return null;
-        }
+                    .onErrorResume(WebClientResponseException.class, e -> {
+                        log.error("Errore chiamata Gemini", e);
+                        return Mono.empty();
+                    });
     }
 }

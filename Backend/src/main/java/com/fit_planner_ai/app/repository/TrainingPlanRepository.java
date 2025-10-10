@@ -11,6 +11,5 @@ import java.util.UUID;
 public interface TrainingPlanRepository extends MongoRepository<TrainingPlan, String> {
     List<TrainingPlan> findAllByUserId(UUID userId);
 
-
     void deleteByIdAndUserId(String trainingPlanId, UUID userId);
 }

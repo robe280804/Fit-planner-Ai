@@ -20,8 +20,12 @@ import com.fit_planner_ai.app.repository.TrainingRequestRepository;
 import com.fit_planner_ai.app.security.model.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +45,10 @@ public class TrainingService {
     /**
      * <p> Il metodo esegue i seguenti step: </p>
      * <ul>
-     *     <li> Ottengo il DTO inviado dall'utente attraverso kafka </li>
+     *     <li> Ottengo il DTO inviato dall'utente attraverso kafka </li>
      *     <li> Genero il prompt da inviare a gemini </li>
+     *     <li> Non sto più nel contesto asincrono nel parsing, quindi converto response in sincrono con block() </li>
+     *     <li> Se con block() ottengo la risposta null, lancio un eccezione (Potrei generare una scheda standard)</li>
      *     <li> Eseguo la chiamata a gemini, e converto la risposta nella classe TrainingPlan </li>
      * </ul>
      * @param request DTO con i dati inviati dall'utente
@@ -50,8 +56,15 @@ public class TrainingService {
      */
     public TrainingPlanDto generateTrainingPlan(TrainingRequestDto request) {
         String prompt = generetePrompt(request);
-        String response = aiService.getAiAnswer(prompt);
-        return convertAiResponse(response, request);
+        Mono<String> response = aiService.getAiAnswer(prompt);
+        String sincroResponse = response.blockOptional()
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NO_CONTENT,
+                        "Nessuna risposta valida da Gemini"
+                ));
+        
+        log.info("[AI RESPONSE] Risposta dall'ai {}", sincroResponse);
+        return convertAiResponse(sincroResponse, request);
     }
 
     /**
@@ -64,11 +77,12 @@ public class TrainingService {
      *     <li> Ritorno un DTO della scheda d'allenamento creata </li>
      * </ul>
      * @param response dell'ai
-     * @param request inviat dall'utente al producer kafka
+     * @param request inviati dall'utente al producer kafka
      * @return Dto che rappresenta la scheda d'allenamento
-     * @throws AiResponseParsingException
+     * @exception  AiResponseParsingException
      */
-    private TrainingPlanDto convertAiResponse(String response, TrainingRequestDto request) {
+    private TrainingPlanDto convertAiResponse(
+            String response, TrainingRequestDto request) {
         log.info("[TRAINING PLAN] Conversione della risposta generata da gemini [{}]", response);
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -142,11 +156,11 @@ public class TrainingService {
                     .additionalMetrics(request.getAdditionalMetrics())
                     .build();
 
-            TrainingPlan savedTrainingPlan = trainingPlanRepository.save(trainingPlan);
+
+            TrainingPlan savedPlan = trainingPlanRepository.save(trainingPlan);
             trainingRequestRepository.save(trainingRequest);
 
-            log.info("[TRAINING PLAN] Training plan creato correttamente [{}]", savedTrainingPlan);
-            return trainingMapper.trainingPlanDto(savedTrainingPlan);
+            return trainingMapper.trainingPlanDto(savedPlan);
 
         } catch (JsonProcessingException e) {
             log.error("[TRAINING PLAN] Errore nel parsing della risposta AI");
@@ -213,7 +227,7 @@ public class TrainingService {
                 .toList();
     }
 
-    public Boolean delete(String trainingPlanId) {
+    public Boolean delete(String trainingPlanId){
         UUID userId = getUserAuthId();
         log.info("[DELETE TRAINING PLAN] Eliminazione della scheda {} per l'utente {}", trainingPlanId, userId);
 
@@ -221,11 +235,11 @@ public class TrainingService {
             log.info("[DELETE TRAINING PLAN] Eliminazione non eseguita, scheda non trovata");
             return false;
         }
-        trainingPlanRepository.deleteByIdAndUserId(trainingPlanId, userId);
-
-        log.info("[DELETE TRAINING PLAN] Eliminazione eseguita");
+        trainingPlanRepository.deleteById(trainingPlanId);
+        log.info("[DELETE TRAINING PLAN] Eliminazione eseguita con successp");
         return true;
     }
+
 
     private static UUID  getUserAuthId() {
         UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

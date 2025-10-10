@@ -6,14 +6,17 @@ import com.fit_planner_ai.app.service.KafkaProducer;
 import com.fit_planner_ai.app.service.TrainingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/training")
 @RequiredArgsConstructor
+@Slf4j
 public class TrainingController {
 
     private final KafkaProducer kafkaProducer;
@@ -27,6 +30,7 @@ public class TrainingController {
 
     @GetMapping("/")
     public ResponseEntity<List<TrainingPlanDto>> getTrainingPlans(){
+        log.info("Chiamata al controller GET");
         return ResponseEntity.ok(trainingService.getTrainingPlans());
     }
 

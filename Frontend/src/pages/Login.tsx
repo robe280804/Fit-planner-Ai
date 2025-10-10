@@ -50,7 +50,7 @@ export const Login = () => {
             console.log("Dati inviati:", fields);
             const response = await login(fields);
             console.log("Login avvenuto con successo:", response);
-            localStorage.setItem("token", response.token)
+            localStorage.setItem("token", response.accessToken)
             navigate("/");
 
         } catch (error) {
