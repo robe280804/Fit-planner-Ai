@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { useContext } from "react";
 import { NavBar } from "../components/NavBar";
+import { Schedule } from "../components/Schedule";
 
 export const Main = () => {
     const { setAuth } = useContext(AuthContext)!
@@ -42,6 +43,8 @@ export const Main = () => {
                 <div style={{ height: 72 }} className="hidden md:block" />
                 <div className="flex items-center justify-center">
                     {/* Contenuto principale */}
+
+                    <Schedule />
                 </div>
             </div>
         </div>
